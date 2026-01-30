@@ -1,4 +1,4 @@
-type Difficulty = "easy" | "medium" | "hard";
+export type Difficulty = "easy" | "medium" | "hard";
 
 export type ProblemStructure = {
   id: string;
@@ -8,3 +8,5 @@ export type ProblemStructure = {
   unfixedMistakesCount: number;
   lastAttempt: string
 };
+
+export type setBool= React.Dispatch<React.SetStateAction<boolean>>
