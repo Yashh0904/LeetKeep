@@ -1,14 +1,30 @@
 import type { ProblemStructure } from "@/types/types";
 import { Trash2Icon, Edit2Icon } from "lucide-react";
-import type { setBool } from "@/types/types";
+import type { setBool, Difficulty } from "@/types/types";
 
 type Props = {
   problems: ProblemStructure[];
   setProblems: React.Dispatch<React.SetStateAction<ProblemStructure[]>>;
   setShowAddProblem: setBool;
+  editingProblemId: string | null;
+  setEditingProblemId: React.Dispatch<React.SetStateAction<string | null>>;
+  setProblemName: React.Dispatch<React.SetStateAction<string>>;
+  setProblemUrl: React.Dispatch<React.SetStateAction<string>>;
+  setProblemDifficulty: React.Dispatch<React.SetStateAction<Difficulty | null>>;
+  setProblemMistakes: React.Dispatch<React.SetStateAction<number>>;
 };
 
-const ProblemList = ({ problems, setProblems, setShowAddProblem }: Props) => {
+const ProblemList = ({
+  problems,
+  setProblems,
+  setShowAddProblem,
+  editingProblemId,
+  setEditingProblemId,
+  setProblemName,
+  setProblemUrl,
+  setProblemDifficulty,
+  setProblemMistakes,
+}: Props) => {
   const DifficultyLabel: Record<ProblemStructure["difficulty"], string> = {
     easy: "Easy",
     medium: "Medium",
@@ -40,7 +56,12 @@ const ProblemList = ({ problems, setProblems, setShowAddProblem }: Props) => {
           />
           <Edit2Icon
             onClick={() => {
-              setShowAddProblem(prev => !prev);
+              setShowAddProblem((prev) => !prev);
+              setEditingProblemId(problem.id);
+              setProblemName(problem.name);
+              setProblemDifficulty(problem.difficulty);
+              setProblemUrl(problem.link === undefined ? "" : problem.link);
+              setProblemMistakes(problem.unfixedMistakesCount);
             }}
             className="text-neutral-500 hover:text-neutral-800"
           />
