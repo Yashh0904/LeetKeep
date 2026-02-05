@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Sidebar = () => {
-  return (
-    <div className='border-2'>Sidebar</div>
-  )
-}
+  return <div className="border-2">Sidebar</div>;
+};
 
-export default Sidebar
+export default Sidebar;

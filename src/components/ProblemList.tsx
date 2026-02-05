@@ -1,35 +1,26 @@
 import type { ProblemStructure } from "@/types/types";
 import { Trash2Icon, Edit2Icon } from "lucide-react";
-import type { setBool, Difficulty } from "@/types/types";
+import { useProblems } from "@/store/store";
 
-type Props = {
-  problems: ProblemStructure[];
-  setProblems: React.Dispatch<React.SetStateAction<ProblemStructure[]>>;
-  setShowAddProblem: setBool;
-  editingProblemId: string | null;
-  setEditingProblemId: React.Dispatch<React.SetStateAction<string | null>>;
-  setProblemName: React.Dispatch<React.SetStateAction<string>>;
-  setProblemUrl: React.Dispatch<React.SetStateAction<string>>;
-  setProblemDifficulty: React.Dispatch<React.SetStateAction<Difficulty | null>>;
-  setProblemMistakes: React.Dispatch<React.SetStateAction<number>>;
-};
-
-const ProblemList = ({
-  problems,
-  setProblems,
-  setShowAddProblem,
-  editingProblemId,
-  setEditingProblemId,
-  setProblemName,
-  setProblemUrl,
-  setProblemDifficulty,
-  setProblemMistakes,
-}: Props) => {
+const ProblemList = () => {
   const DifficultyLabel: Record<ProblemStructure["difficulty"], string> = {
     easy: "Easy",
     medium: "Medium",
     hard: "Hard",
   };
+
+  const {
+    problems,
+    deleteProblem,
+
+    // edit actions
+    setEditingId,
+    setShowAddProblem,
+    setProblemName,
+    setProblemUrl,
+    setProblemDifficulty,
+    setProblemMistakes,
+  } = useProblems();
 
   return (
     <div className="p-8 m-8">
@@ -49,15 +40,15 @@ const ProblemList = ({
           <p>{problem.lastAttempt}</p>
           <p>{problem.unfixedMistakesCount}</p>
           <Trash2Icon
-            onClick={() =>
-              setProblems(problems.filter((curr) => problem.id !== curr.id))
-            }
+            onClick={() => deleteProblem(problem.id)}
             className="text-neutral-500 hover:text-red-800/80"
           />
           <Edit2Icon
             onClick={() => {
-              setShowAddProblem((prev) => !prev);
-              setEditingProblemId(problem.id);
+              setEditingId(problem.id);
+
+              // mount existing values to modal
+              setShowAddProblem(true);
               setProblemName(problem.name);
               setProblemDifficulty(problem.difficulty);
               setProblemUrl(problem.link === undefined ? "" : problem.link);

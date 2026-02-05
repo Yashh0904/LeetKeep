@@ -1,37 +1,31 @@
 import type { ProblemStructure, setBool } from "@/types/types";
 import type { Difficulty } from "@/types/types";
+import { useProblems } from "@/store/store";
 
-type Props = {
-  problems: ProblemStructure[];
-  setShowAddProblem: setBool;
-  setProblems: React.Dispatch<React.SetStateAction<ProblemStructure[]>>;
-  editingProblemId: string | null;
-  setEditingProblemId: React.Dispatch<React.SetStateAction<string | null>>;
-  problemName: string;
-  setProblemName: React.Dispatch<React.SetStateAction<string>>;
-  problemUrl: string;
-  setProblemUrl: React.Dispatch<React.SetStateAction<string>>;
-  problemDifficulty: Difficulty | null;
-  setProblemDifficulty: React.Dispatch<React.SetStateAction<Difficulty | null>>;
-  problemMistakes: number;
-  setProblemMistakes: React.Dispatch<React.SetStateAction<number>>;
-};
+const AddProblemModal = () => {
+  const {
+    addProblem,
+    editProblem,
 
-const AddProblemModal = ({
-  problems,
-  setShowAddProblem,
-  setProblems,
-  editingProblemId,
-  setEditingProblemId,
-  problemName,
-  setProblemName,
-  problemUrl,
-  setProblemUrl,
-  problemDifficulty,
-  setProblemDifficulty,
-  problemMistakes,
-  setProblemMistakes,
-}: Props) => {
+    // read and reset edit id
+    editingProblemId,
+    setEditingId,
+
+    // to read existing values in case of edit
+    problemName,
+    problemUrl,
+    problemDifficulty,
+    problemMistakes,
+
+    // to reset values after edit
+    setShowAddProblem,
+    setProblemName,
+    setProblemUrl,
+    setProblemDifficulty,
+    setProblemMistakes,
+    resetModalFields,
+  } = useProblems();
+
   return (
     <div className="fixed inset-0 grid place-items-center">
       <div className="absolute inset-0 bg-black/40" />
@@ -41,24 +35,16 @@ const AddProblemModal = ({
             e.preventDefault();
 
             if (editingProblemId) {
-              setProblems(
-                problems.map((p) =>
-                  p.id === editingProblemId
-                    ? {
-                        ...p,
-                        name: problemName,
-                        difficulty: problemDifficulty as Difficulty,
-                        link: problemUrl,
-                        unfixedMistakesCount: problemMistakes,
-                      }
-                    : p,
-                ),
-              );
-              setProblemName("");
-              setProblemDifficulty(null);
-              setProblemUrl("");
-              setProblemMistakes(0);
-              setEditingProblemId(null);
+              const updates = {
+                name: problemName,
+                difficulty: problemDifficulty as Difficulty,
+                link: problemUrl,
+                unfixedMistakesCount: problemMistakes,
+              };
+
+              editProblem(editingProblemId, updates);
+              setEditingId(null);
+
             } else {
               const newProblem: ProblemStructure = {
                 id: crypto.randomUUID().slice(0, 8),
@@ -68,10 +54,11 @@ const AddProblemModal = ({
                 unfixedMistakesCount: problemMistakes,
                 lastAttempt: new Date().toISOString().slice(0, 10),
               };
-
-              setProblems([...problems, newProblem]);
+              addProblem(newProblem);
+              setShowAddProblem(false);
             }
-
+            
+            resetModalFields();
             setShowAddProblem(false);
           }}
         >
